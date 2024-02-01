@@ -1,0 +1,149 @@
+generator erd {
+  provider                  = "prisma-erd-generator"
+  includeRelationFromFields = true
+  output                    = "./ERD.png"
+}
+
+generator app {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHERS
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  email             String              @unique
+  gender            Gender              @default(OTHERS)
+  role              Role                @default(USER)
+  password          String
+  username          String              @unique
+  profile           String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+  Generation        Generation[]
+  SharedGenerations SharedGenerations[]
+}
+
+model Image {
+  id         Int          @id @default(autoincrement())
+  name       String
+  url        String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  DateTime?
+  Generation Generation[]
+}
+
+model Generation {
+  id          Int                 @id @default(autoincrement())
+  name        String              @default("Untitled")
+  description String?
+  prompt      String              @default("Untitled")
+  code        String?
+  imageId     Int?
+  image       Image?              @relation(fields: [imageId], references: [id])
+  userId      Int?
+  user        User?               @relation(fields: [userId], references: [id])
+  isPublic    Boolean             @default(false)
+  Thread      Thread?             @relation("generations", fields: [threadId], references: [id])
+  threadId    Int?
+  sharedWith  SharedGenerations[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
+}
+
+model SharedGenerations {
+  id           Int         @id @default(autoincrement())
+  userId       Int?
+  user         User?       @relation(fields: [userId], references: [id])
+  generationId Int?
+  generation   Generation? @relation(fields: [generationId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?
+}
+
+model Thread {
+  id            Int          @id @default(autoincrement())
+  name          String       @default("Untitled")
+  generationIds Int[]
+  generations   Generation[] @relation("generations")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime?
+}
+
+// Not part of the current schema
+// model Comment {
+//   id         Int      @id @default(autoincrement())
+//   text       String
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+//   deletedAt  DateTime?
+//   userId     Int?
+//   user       User?    @relation(fields: [userId], references: [id])
+//   generation Generation? @relation(fields: [generationId], references: [id])
+//   generationId Int?
+// }
+
+// model Like {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+//   deletedAt  DateTime?
+//   userId     Int?
+//   user       User?    @relation(fields: [userId], references: [id])
+//   generation Generation? @relation(fields: [generationId], references: [id])
+//   generationId Int?
+// }
+
+// model Follow {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+//   deletedAt  DateTime?
+//   userId     Int?
+//   user       User?    @relation(fields: [userId], references: [id])
+//   followerId Int?
+//   follower   User?    @relation("Follow", fields: [followerId], references: [id])
+// }
+
+// model Notification {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+//   deletedAt  DateTime?
+//   userId     Int?
+//   user       User?    @relation(fields: [userId], references: [id])
+//   generationId Int?
+//   generation Generation? @relation(fields: [generationId], references: [id])
+//   type       String
+//   read       Boolean  @default(false)
+// }
+
+// model Tag {
+//   id         Int      @id @default(autoincrement())
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+//   deletedAt  DateTime?
+//   name       String
+//   generation Generation[] @relation(fields: [generationId], references: [id])
+//   generationId Int?
+// }
