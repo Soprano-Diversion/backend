@@ -66,7 +66,7 @@ const checkBasePermissions = async ({
       if (allowedIds.length > 0 && !allowedIds.includes(ctx.auth.id)) {
         return errorHandler(ERRORS.FORBIDDEN);
       }
-      return ctx.auth; 
+      return true;
     }
 
     if (!requiredRoles.includes(ctx.auth.role)) {

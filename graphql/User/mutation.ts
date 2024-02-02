@@ -36,6 +36,7 @@ export const UserUpdateInputType = inputObjectType({
 
 export const signup = mutationField('signup', {
   type: 'AuthPayload',
+  description: 'Create a new user and return the token and user',
   args: {
     data: nonNull('UserCreateInputType'),
   },
@@ -62,6 +63,7 @@ export const signup = mutationField('signup', {
 
 export const login = mutationField('login', {
   type: 'AuthPayload',
+  description: 'Login the user and return the token and user',
   args: {
     username: nonNull(stringArg()),
     password: nonNull(stringArg()),
@@ -92,6 +94,7 @@ export const login = mutationField('login', {
 
 export const updateProfile = mutationField('updateProfile', {
   type: 'User',
+  description: 'Update the profile of the current logged in user or the user with the given id if the user is an admin',
   args: {
     id: intArg(),
     data: nonNull('UserUpdateInputType'),
@@ -125,6 +128,7 @@ export const updateProfile = mutationField('updateProfile', {
 
 export const changePassword = mutationField('changePassword', {
   type: 'Boolean',
+  description: 'Change the password of the current logged in user',
   args: {
     username: stringArg(),
     oldPassword: stringArg(),
