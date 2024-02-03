@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { ALLOWED_ORIGINS } from '../config';
+import { createImage } from './image';
 
 const app = express();
 
@@ -29,5 +30,7 @@ app.get('/', async (_, res) => {
     code: 200,
   });
 });
+
+app.post('/upload-image', createImage);
 
 export default app;
