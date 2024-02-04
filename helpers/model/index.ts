@@ -37,7 +37,7 @@ export const generateCodeFromModel = async (input: generateInput) => {
   const { html, react } = response.data.generated;
 
   // remove the ```html``` and ```jsx``` from the string
-  const parsedHTML = (html as string).replace('```html', '').replace('```', '');
+  const parsedHTML = (html as string).replace('```html\n', '').replace('`\n``', '');
   const parsedReact = (react as string).replace('```jsx', '').replace('```', '');
 
   return {
