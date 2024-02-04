@@ -1,5 +1,19 @@
 import { objectType } from "nexus";
 
+export const code = objectType({
+  name: 'Code',
+  description: 'Generated code from sketches',
+  definition(t) {
+    t.nonNull.int('id')
+    t.string('html')
+    t.string('dsl')
+    t.string('react')
+    t.nonNull.date('createdAt')
+    t.nonNull.date('updatedAt')
+    t.nonNull.date('deletedAt')
+  },
+})
+
 export const Generation = objectType({
   name: 'Generation',
   description: 'Generateed UIs from sketches through users',
@@ -8,9 +22,9 @@ export const Generation = objectType({
     t.nonNull.string('name')
     t.string('description')
     t.nonNull.string('prompt')
-    t.string('code')
     t.nonNull.int('userId')
     t.int('threadId')
+    t.int('codeId')
     t.nonNull.boolean('isPublic')
     t.nonNull.date('createdAt')
     t.nonNull.date('updatedAt')
@@ -54,7 +68,20 @@ export const Generation = objectType({
           where: { id: parent.threadId },
         });
       },
+    })
 
+    t.field('code', {
+      type: 'Code',
+      description: 'Code of the generation',
+      resolve: async (parent, _, ctx) => {
+        if (!parent.codeId) {
+          return null;
+        }
+
+        return ctx.prisma.code.findFirst({
+          where: { id: parent.codeId },
+        });
+      },
     })
   },
 })

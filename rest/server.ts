@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { ALLOWED_ORIGINS } from '../config';
 import { createImage } from './image';
+import { generateCodeFromModel } from '../helpers/model';
 
 const app = express();
 
@@ -32,5 +33,18 @@ app.get('/', async (_, res) => {
 });
 
 app.post('/upload-image', createImage);
+
+// Testing generate
+app.post('/generate', async (req, res) => {
+  const { prompt, filepath, filename } = req.body;
+
+  const response = await generateCodeFromModel({
+    prompt,
+    filepath,
+    filename,
+  });
+
+  res.json(response);
+})
 
 export default app;
